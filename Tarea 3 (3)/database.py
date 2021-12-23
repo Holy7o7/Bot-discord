@@ -2,7 +2,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine("mysql+pymysql://root:sao2512@localhost:3306/sun")
+SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://api-news:my-api-password@127.0.0.1:3306/sun"
+
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
