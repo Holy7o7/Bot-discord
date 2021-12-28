@@ -51,5 +51,14 @@ services:
         container_name: rabbitmq
         restart: 'always'
 
+    youtube:
+        build:
+          context: ./youtube_seach
+        container_name: youtube
+        environment:
+          - RABBITMQ_HOST=rabbitmq
+        networks: 
+          - network
+        #network_mode: "default"
 networks:
   network: {}
