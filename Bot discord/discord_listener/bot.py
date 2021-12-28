@@ -13,8 +13,7 @@ import re
 HOST = os.environ['RABBITMQ_HOST']
 print("rabbit:"+HOST)
 
-connection = pika.BlockingConnection(
-	pika.ConnectionParameters(host=HOST, heartbeat=3600,blocked_connection_timeout=1000))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host=HOST, heartbeat=3600,blocked_connection_timeout=1000))
 channelMQ = connection.channel()
 
 #Creamos el exchange 'cartero' de tipo 'fanout'
@@ -87,7 +86,7 @@ def writer(bot):
 	channelMQ.exchange_declare(exchange='cartero', exchange_type='topic', durable=True)
 
 	#Se crea un cola temporaria exclusiva para este consumidor (búzon de correos)
-	result = channelMQ.queue_declare(queue="discord_writer", exclusive=True, durable=True)
+	result = channelMQ.queue_declare(queue="discord_writer", durable=True)
 	queue_name = result.method.queue
 
 	#La cola se asigna a un 'exchange'

@@ -22,15 +22,14 @@ time.sleep(10)
 HOST = os.environ['RABBITMQ_HOST']
 print("rabbit:"+HOST)
 
-connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host=HOST))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host=HOST))
 channel = connection.channel()
 
 #El consumidor utiliza el exchange 'cartero'
 channel.exchange_declare(exchange='cartero', exchange_type='topic', durable=True)
 
 #Se crea un cola temporaria exclusiva para este consumidor (búzon de correos)
-result = channel.queue_declare(queue="birthday", exclusive=True, durable=True)
+result = channel.queue_declare(queue="birthday", durable=True)
 queue_name = result.method.queue
 
 #La cola se asigna a un 'exchange'
