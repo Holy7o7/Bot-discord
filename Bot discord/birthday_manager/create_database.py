@@ -19,11 +19,11 @@ def create_database(db_connection,db_name,cursor):
 	cursor.execute("COMMIT;") 
 
 def insert_data(cursor):
-    print("insert")
-    cursor.execute('''INSERT INTO birthday (member,date) VALUES
-    ('MatthieuVernier','1985-02-13');
-    ''')
-    cursor.execute("COMMIT;") 
+	print("insert")
+	cursor.execute('''INSERT INTO birthday (member,date) VALUES
+	('MatthieuVernier','1985-02-13');
+	''')
+	cursor.execute("COMMIT;") 
 
 #######################
 

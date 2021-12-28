@@ -14,7 +14,7 @@ HOST = os.environ['RABBITMQ_HOST']
 print("rabbit:"+HOST)
 
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host=HOST, heartbeat=3600,blocked_connection_timeout=1000))
+	pika.ConnectionParameters(host=HOST, heartbeat=3600,blocked_connection_timeout=1000))
 channelMQ = connection.channel()
 
 #Creamos el exchange 'cartero' de tipo 'fanout'
@@ -28,45 +28,45 @@ bot = commands.Bot(command_prefix='-')
 
 @bot.event
 async def on_ready():
-    for guild in bot.guilds:
-        if guild.name == GUILD:
-            break
+	for guild in bot.guilds:
+		if guild.name == GUILD:
+			break
 
-    print(
-        f'{bot.user} is connected to the following guild:\n'
-        f'{guild.name}(id: {guild.id})\n'
-    )
+	print(
+		f'{bot.user} is connected to the following guild:\n'
+		f'{guild.name}(id: {guild.id})\n'
+	)
 
-    members = '\n - '.join([member.name for member in guild.members])
-    print(f'Guild Members:\n - {members}')
+	members = '\n - '.join([member.name for member in guild.members])
+	print(f'Guild Members:\n - {members}')
 
-    for channel in bot.get_all_channels():
-        print(channel)
-        print(channel.id)
+	for channel in bot.get_all_channels():
+		print(channel)
+		print(channel.id)
 
-    channel = bot.get_channel(913706828502814760)
-    await channel.send('¡Hola!')
+	channel = bot.get_channel(913706828502814760)
+	await channel.send('¡Hola!')
 
 @bot.command(name='birthday', help='Muestra la fecha de cumpleaño del miembro de la GUILD que se pasa en parámetro. Ejemplo: -birthday MatthieuVernier')
 async def cumpleaños(ctx):
-    message =  ctx.message.content
-    print("send a new mesage to rabbitmq: "+message)
+	message =  ctx.message.content
+	print("send a new mesage to rabbitmq: "+message)
 
-    channelMQ.basic_publish(exchange='cartero', routing_key="birthday", body=message)
+	channelMQ.basic_publish(exchange='cartero', routing_key="birthday", body=message)
 
 @bot.command(name='add-birthday', help='Permite añadir el cumpleaño de un nuevo miembro de la GUILD que se pasa en parámetro. Ejemplo: -birthday MatthieuVernier 1985-02-13')
 async def cumpleaños(ctx):
-    message =  ctx.message.content
-    print("send a new mesage to rabbitmq: "+message)
-    channelMQ.basic_publish(exchange='cartero', routing_key="birthday", body=message)
+	message =  ctx.message.content
+	print("send a new mesage to rabbitmq: "+message)
+	channelMQ.basic_publish(exchange='cartero', routing_key="birthday", body=message)
 
 ######### busquedas en youtube #######
 
 @bot.command(name='youtube', help='Permite hacer una busqueda en youtube. Ejemplo: -youtube himno de chile')
 async def youtube(ctx, *, search):
-    message =  search.message.content
-    print("send a new mesage to rabbitmq: "+message)
-    channelMQ.basic_publish(exchange='cartero', routing_key="youtube", body=message)
+	message =  search.message.content
+	print("send a new mesage to rabbitmq: "+message)
+	channelMQ.basic_publish(exchange='cartero', routing_key="youtube", body=message)
 
 ############ CONSUMER ###############
 
@@ -74,42 +74,42 @@ import threading
 import asyncio
 
 def writer(bot):
-    """thread worker function"""
-    print('Worker')
+	"""thread worker function"""
+	print('Worker')
 
-    HOST = os.environ['RABBITMQ_HOST']
+	HOST = os.environ['RABBITMQ_HOST']
 
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host=HOST))
-    channelMQ = connection.channel()
+	connection = pika.BlockingConnection(
+		pika.ConnectionParameters(host=HOST))
+	channelMQ = connection.channel()
 
-    #Creamos el exchange 'cartero' de tipo 'fanout'
-    channelMQ.exchange_declare(exchange='cartero', exchange_type='topic', durable=True)
+	#Creamos el exchange 'cartero' de tipo 'fanout'
+	channelMQ.exchange_declare(exchange='cartero', exchange_type='topic', durable=True)
 
-    #Se crea un cola temporaria exclusiva para este consumidor (búzon de correos)
-    result = channelMQ.queue_declare(queue="discord_writer", exclusive=True, durable=True)
-    queue_name = result.method.queue
+	#Se crea un cola temporaria exclusiva para este consumidor (búzon de correos)
+	result = channelMQ.queue_declare(queue="discord_writer", exclusive=True, durable=True)
+	queue_name = result.method.queue
 
-    #La cola se asigna a un 'exchange'
-    channelMQ.queue_bind(exchange='cartero', queue=queue_name, routing_key="discord_writer")
+	#La cola se asigna a un 'exchange'
+	channelMQ.queue_bind(exchange='cartero', queue=queue_name, routing_key="discord_writer")
 
 
-    print(' [*] Waiting for messages. To exit press CTRL+C')
+	print(' [*] Waiting for messages. To exit press CTRL+C')
 
-    async def write(message):
-        channel = bot.get_channel(908505071887732768)#913706828502814760
-        await channel.send(message)
+	async def write(message):
+		channel = bot.get_channel(908505071887732768)#913706828502814760
+		await channel.send(message)
 
-    def callback(ch, method, properties, body):
-        message=body.decode("UTF-8")
-        print(message)
+	def callback(ch, method, properties, body):
+		message=body.decode("UTF-8")
+		print(message)
 
-        bot.loop.create_task(write(message))
+		bot.loop.create_task(write(message))
 
-    channelMQ.basic_consume(
-        queue=queue_name, on_message_callback=callback, auto_ack=True)
+	channelMQ.basic_consume(
+		queue=queue_name, on_message_callback=callback, auto_ack=True)
 
-    channelMQ.start_consuming()
+	channelMQ.start_consuming()
 
 t = threading.Thread(target=writer, args=[bot])
 t.start()
