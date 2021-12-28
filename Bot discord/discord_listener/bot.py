@@ -63,7 +63,7 @@ async def cumpleaños(ctx):
 
 @bot.command(name='youtube', help='Permite hacer una busqueda en youtube. Ejemplo: -youtube himno de chile')
 async def youtube(ctx, *, search):
-	message =  search.message.content
+	message =  search
 	print("send a new mesage to rabbitmq: "+message)
 	channelMQ.basic_publish(exchange='cartero', routing_key="youtube", body=message)
 
