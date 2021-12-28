@@ -47,14 +47,14 @@ async def on_ready():
     channel = bot.get_channel(913706828502814760)
     await channel.send('¡Hola!')
 
-@bot.command(name='birthday', help='Muestra la fecha de cumpleaño del miembro de la GUILD que se pasa en parámetro. Ejemplo: !birthday MatthieuVernier')
+@bot.command(name='birthday', help='Muestra la fecha de cumpleaño del miembro de la GUILD que se pasa en parámetro. Ejemplo: -birthday MatthieuVernier')
 async def cumpleaños(ctx):
     message =  ctx.message.content
     print("send a new mesage to rabbitmq: "+message)
 
     channelMQ.basic_publish(exchange='cartero', routing_key="birthday", body=message)
 
-@bot.command(name='add-birthday', help='Permite añadir el cumpleaño de un nuevo miembro de la GUILD que se pasa en parámetro. Ejemplo: !birthday MatthieuVernier 1985-02-13')
+@bot.command(name='add-birthday', help='Permite añadir el cumpleaño de un nuevo miembro de la GUILD que se pasa en parámetro. Ejemplo: -birthday MatthieuVernier 1985-02-13')
 async def cumpleaños(ctx):
     message =  ctx.message.content
     print("send a new mesage to rabbitmq: "+message)
@@ -62,7 +62,7 @@ async def cumpleaños(ctx):
 
 ######### busquedas en youtube #######
 
-@bot.command()
+@bot.command(name='youtube', help='Permite hacer una busqueda en youtube. Ejemplo: -youtube himno de chile')
 async def youtube(ctx, *, search):
     query_string = parse.urlencode({'search_query': search})
     html_content = request.urlopen('http://www.youtube.com/results?' + query_string)
