@@ -1,4 +1,4 @@
-import pika
+import pika,os
 from urllib import parse, request
 import re
 
