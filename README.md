@@ -1,4 +1,4 @@
-# INFO229: Arquitectura de Software - Tareas pequeñas y Bot de Discord.
+# INFO229: Arquitectura de Software - Tareas pequeñas y Bot de Discord (V 1.0)
 
 Las tareas son ejecutadas por separado usando
 
